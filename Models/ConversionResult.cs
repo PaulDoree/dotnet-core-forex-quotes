@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Forge.Models
 {
-    public class Convert
+    public class ConversionResult
     {
         [JsonProperty("value")]
         public double Value;

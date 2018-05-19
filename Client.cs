@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json;
 using Forge.Models;
@@ -31,19 +32,47 @@ namespace Forge
             return JsonConvert.DeserializeObject<Quota>(responseString);
         }
 
-        private async Task<string> GetHttpResponseContent(string path, IDictionary<string,string> args = null)
+        public async Task<List<string>> GetSymbols()
+        {
+            var responseString = await GetHttpResponseContent("symbols");
+            return JsonConvert.DeserializeObject<List<string>>(responseString);
+        }
+
+        public async Task<ConversionResult> Convert(string from, string to, double quantity)
+        {
+            var queryParams = new Dictionary<string, string>{ {"from", from }, {"to", to}, {"quantity", quantity.ToString()} };
+            var responseString = await GetHttpResponseContent("convert", queryParams);
+            return JsonConvert.DeserializeObject<ConversionResult>(responseString);
+        }
+
+        public async Task<List<Quote>> GetQuotes(ICollection<string> currencyPairs)
+        {
+            var queryParams = new Dictionary<string, string> { {"pairs", string.Join(",", currencyPairs) } };
+            var responseString = await GetHttpResponseContent("quotes", queryParams);
+            return JsonConvert.DeserializeObject<List<Quote>>(responseString);
+        }
+
+        private async Task<string> GetHttpResponseContent(string path, IDictionary<string, string> args = null)
+        {
+            var queryString = FormQueryString(args);
+            var uri = new Uri(_baseUri + path + queryString);
+
+            var response = await _httpClient.GetAsync(uri);
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private QueryString FormQueryString(IDictionary<string, string> args)
         {
             var queryBuilder = new QueryBuilder();
+
             foreach (KeyValuePair<string, string> keyVal in args)
             {
                queryBuilder.Add(keyVal.Key, keyVal.Value);
             }
             queryBuilder.Add("api_key", _apiKey);
-            var uri = new Uri(_baseUri + path + queryBuilder.ToQueryString());
 
-            var response = await _httpClient.GetAsync(uri);
-
-            return await response.Content.ReadAsStringAsync();
+            return queryBuilder.ToQueryString();
         }
     }
 }
