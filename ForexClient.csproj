@@ -5,6 +5,8 @@
     <PackageId>ForexClient</PackageId>
     <Version>0.1.0</Version>
     <Authors>Rohit Jha</Authors>
+    <RepositoryUrl>https://github.com/rohitjha/dotnet-core-forex-quotes</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
