@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json;
-using Forge.Models;
+using Forex.Models;
 
-namespace Forge
+namespace Forex
 {
     public class ForexClient
     {
@@ -94,9 +95,9 @@ namespace Forge
 
             var response = await _httpClient.GetAsync(uri);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception($"Request to get {path} failed with status code {response.StatusCode}.");
+                throw new Exception($"Request to failed with status code {response.StatusCode}.");
             }
 
             return await response.Content.ReadAsStringAsync();

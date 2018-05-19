@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Forge.Models
+namespace Forex.Models
 {
     public class Quota
     {
