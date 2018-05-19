@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -30,9 +31,13 @@ namespace Forge
             return JsonConvert.DeserializeObject<Quota>(responseString);
         }
 
-        private async Task<string> GetHttpResponseContent(string path)
+        private async Task<string> GetHttpResponseContent(string path, IDictionary<string,string> args = null)
         {
             var queryBuilder = new QueryBuilder();
+            foreach (KeyValuePair<string, string> keyVal in args)
+            {
+               queryBuilder.Add(keyVal.Key, keyVal.Value);
+            }
             queryBuilder.Add("api_key", _apiKey);
             var uri = new Uri(_baseUri + path + queryBuilder.ToQueryString());
 
