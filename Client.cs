@@ -22,34 +22,69 @@ namespace Forge
 
         public async Task<MarketStatus> GetMarketStatus()
         {
-            var responseString = await GetHttpResponseContent("market_status");
-            return JsonConvert.DeserializeObject<MarketStatus>(responseString);
+            try
+            {
+                var responseString = await GetHttpResponseContent("market_status");
+                return JsonConvert.DeserializeObject<MarketStatus>(responseString);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<Quota> GetQuota()
         {
-            var responseString = await GetHttpResponseContent("quota");
-            return JsonConvert.DeserializeObject<Quota>(responseString);
+            try
+            {
+                var responseString = await GetHttpResponseContent("quota");
+                return JsonConvert.DeserializeObject<Quota>(responseString);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<string>> GetSymbols()
         {
-            var responseString = await GetHttpResponseContent("symbols");
-            return JsonConvert.DeserializeObject<List<string>>(responseString);
+            try
+            {
+                var responseString = await GetHttpResponseContent("symbols");
+                return JsonConvert.DeserializeObject<List<string>>(responseString);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<ConversionResult> Convert(string from, string to, double quantity)
         {
-            var queryParams = new Dictionary<string, string>{ {"from", from }, {"to", to}, {"quantity", quantity.ToString()} };
-            var responseString = await GetHttpResponseContent("convert", queryParams);
-            return JsonConvert.DeserializeObject<ConversionResult>(responseString);
+            try
+            {
+                var queryParams = new Dictionary<string, string>{ {"from", from }, {"to", to}, {"quantity", quantity.ToString()} };
+                var responseString = await GetHttpResponseContent("convert", queryParams);
+                return JsonConvert.DeserializeObject<ConversionResult>(responseString);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<Quote>> GetQuotes(ICollection<string> currencyPairs)
         {
-            var queryParams = new Dictionary<string, string> { {"pairs", string.Join(",", currencyPairs) } };
-            var responseString = await GetHttpResponseContent("quotes", queryParams);
-            return JsonConvert.DeserializeObject<List<Quote>>(responseString);
+            try
+            {
+                var queryParams = new Dictionary<string, string> { {"pairs", string.Join(",", currencyPairs) } };
+                var responseString = await GetHttpResponseContent("quotes", queryParams);
+                return JsonConvert.DeserializeObject<List<Quote>>(responseString);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private async Task<string> GetHttpResponseContent(string path, IDictionary<string, string> args = null)
@@ -58,6 +93,11 @@ namespace Forge
             var uri = new Uri(_baseUri + path + queryString);
 
             var response = await _httpClient.GetAsync(uri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Request to get {path} failed with status code {response.StatusCode}.");
+            }
 
             return await response.Content.ReadAsStringAsync();
         }
