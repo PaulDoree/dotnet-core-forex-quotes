@@ -9,13 +9,13 @@ using Forge.Models;
 
 namespace Forge
 {
-    public class Client
+    public class ForexClient
     {
         private readonly string _apiKey;
         private const string _baseUri = "https://forex.1forge.com/1.0.3/";
         private static readonly HttpClient _httpClient = new HttpClient();
 
-        public Client(string apiKey)
+        public ForexClient(string apiKey)
         {
             _apiKey = apiKey;
         }
